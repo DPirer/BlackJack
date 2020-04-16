@@ -4,6 +4,10 @@
 
 using namespace std;
 
+char matriz[4][13]={{'A','2','3','4','5','6','7','8','9','X','J','Q','K'},{'A','2','3','4','5','6','7','8','9','X','J','Q','K'},
+                   {'A','2','3','4','5','6','7','8','9','X','J','Q','K'},{'A','2','3','4','5','6','7','8','9','X','J','Q','K'}};
+int saldo;
+
 struct Mano{
     char numero;
     int palo;
@@ -12,22 +16,125 @@ struct Mano{
 void repartirCarta(Mano *puntero);
 void mostrarMano(Mano *puntero);
 int valorMano(Mano *puntero);
+int apostar();
+int doblar(int apuesta);
+void mostrarBanca(Mano* puntero);
+void retirar(int apuesta);
 
 int main(){
-    repartirCarta(pJugador);
-    repartirCarta(pJugador);
-    mostrarMano(pJugador);
-    cout << "Valor de la mano: " << valorMano(pJugador) <<  endl;
+    int opc, apuesta;
+
+    cout << "\tBienvenido." << endl;
+    saldo=2000;
+    cout << "Dispone de un saldo inicial de: " << saldo << endl;
+    cout << "El juego va a comenzar. " << endl;
+
+    for (int i=0; i<2; i++){
+        repartirCarta(pJugador);
+        repartirCarta(pBanca);
+    }
+
+    do{
+        cout << "Que desea hacer: " << endl;
+        cout << "1. Consultar mano. " << endl;
+        cout << "2. Consultar valor. " << endl;
+        cout << "3. Consultar carta Banca. " << endl;
+        cout << "4. Apostar" << endl;
+        cout << "5. Siguiente ronda. " << endl;
+        cout << "Opcion: "; cin >> opc;
+
+        switch (opc) {
+        case 1:{
+            system("cls");
+
+            mostrarMano(pJugador);
+            cout << "\n\n";
+            system("pause");
+        } break;
+        case 2:{
+            system("cls");
+
+            cout << "Valor de la mano: " << valorMano(pJugador) <<  endl;
+            cout << "\n\n";
+            system("pause");
+        }break;
+        case 3:{
+            system("cls");
+
+            mostrarBanca(pBanca);
+            cout << "\n\n";
+            system("pause");
+        }break;
+        case 4:{
+            system("cls");
+
+            apuesta=apostar();
+            cout << "\n\n";
+            system("pause");
+        }break;
+        }
+    }while(opc!=5);
+
+
+    cout << "Siguiente ronda: " << endl;
+    do{
+        cout << "Que desea hacer: " << endl;
+        cout << "1. Consultar mano. " << endl;
+        cout << "2. Consultar valor. " << endl;
+        cout << "3. Consultar carta Banca. " << endl;
+        cout << "4. Doblar. " << endl;
+        cout << "5. Pedir Carta. " << endl;
+        cout << "6. Retirarse. " << endl;
+        cout << "Opcion: "; cin >> opc;
+
+        switch (opc) {
+        case 1:{
+            system("cls");
+
+            mostrarMano(pJugador);
+            cout << "\n\n";
+            system("pause");
+        } break;
+        case 2:{
+            system("cls");
+
+            cout << "Valor de la mano: " << valorMano(pJugador) <<  endl;
+            cout << "\n\n";
+            system("pause");
+        }break;
+        case 3:{
+            system("cls");
+
+            mostrarBanca(pBanca);
+            cout << "\n\n";
+            system("pause");
+        }break;
+        case 4:{
+            system("cls");
+
+            apuesta=doblar(apuesta);
+            cout << "\n\n";
+            system("pause");
+        }break;
+        case 5:{
+            system("cls");
+
+            repartirCarta(pJugador);
+            cout << "\n\n";
+            system("pause");
+        }break;
+        }
+    }while(opc!=6);
+
+    retirar( apuesta);
+
     return 0;
 }
 
 void repartirCarta(Mano *puntero){
     int num, palo, pos=0;
-    char matriz[4][13]={{'A','2','3','4','5','6','7','8','9','X','J','Q','K'},{'A','2','3','4','5','6','7','8','9','X','J','Q','K'},
-                       {'A','2','3','4','5','6','7','8','9','X','J','Q','K'},{'A','2','3','4','5','6','7','8','9','X','J','Q','K'}};
-
-    srand(time(NULL));
     do{
+       srand(time(0));
        num=1+rand()%12;
        palo=1+rand()%3;
     }while(matriz[palo][num]=='0');
@@ -42,10 +149,28 @@ void repartirCarta(Mano *puntero){
 
 void mostrarMano(Mano *puntero){
     int i=0;
+
     do{
-        cout << (puntero+i)->numero << " de " << (puntero+i)->palo << endl;
+        cout << (puntero+i)->numero << " de ";
+        switch ((puntero+i)->palo) {
+            case 1: cout << " Trebol." << endl; break;
+            case 2: cout << " Corazones." << endl; break;
+            case 3: cout << " Picas." << endl; break;
+            case 4: cout << " Diamantes." << endl; break;
+        }
         i++;
     }while ((puntero+i)->palo!=0);
+}
+
+void mostrarBanca(Mano* puntero){
+    cout << puntero->numero << " de ";
+    switch (puntero->palo) {
+        case 1: cout << " Trebol." << endl; break;
+        case 2: cout << " Corazones." << endl; break;
+        case 3: cout << " Picas." << endl; break;
+        case 4: cout << " Diamantes." << endl; break;
+    }
+    return;
 }
 
 int valorMano(Mano *puntero){
@@ -75,9 +200,53 @@ int valorMano(Mano *puntero){
         case 'J':
         case 'Q':
         case 'K':valor=valor+10; break;
-
         }
         pos++;
     }while((puntero+pos)->palo!=0);
     return valor;
+}
+
+int apostar(){
+    int apuesta;
+    do{
+        cout << "Dinero como apuesta inicial: ";cin >> apuesta;
+        if (apuesta > saldo){
+            cout << "No dispone de saldo suficiente. " << endl;
+        }
+    }while (apuesta>saldo);
+    saldo=saldo-apuesta;
+    return apuesta;
+}
+
+int doblar(int apuesta){
+    if (2*apuesta>saldo){
+        cout << "No dispone de saldo sufiente." << endl;
+        return apuesta;
+    }
+    else{
+        return 2*apuesta;
+    }
+}
+
+void retirar(int apuesta){
+    if (valorMano(pJugador)<16){
+        cout <<"No se puede retirar" << endl;
+    }
+    else{
+        cout << "Jugador: " << valorMano(pJugador) << endl;
+        if (valorMano(pBanca)<18){
+            repartirCarta(pBanca);
+        }
+        cout << "Banca: " << valorMano(pBanca) << endl;
+
+        if (valorMano(pBanca)>21 || (valorMano(pJugador)<=21 && valorMano(pJugador)>valorMano(pBanca))){
+            cout << "Enhorabuena, has ganado!! " << endl;
+            cout << "Ganacias: " << apuesta*3/2 << endl;
+            saldo=saldo+apuesta*3/2;
+        }
+        else{
+            cout << "Has perdido, vuelve a intentarlo " << endl;
+        }
+    }
+    cout << "Saldo actual: " << saldo << endl;
 }
