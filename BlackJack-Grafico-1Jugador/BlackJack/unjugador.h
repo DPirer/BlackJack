@@ -25,6 +25,8 @@ private slots:
 
     void comprobarBlackjack();
 
+    QString CrearDireccion(int,QString);
+
     void on_boton_empezar_clicked();
 
     void on_boton_pedir_carta_clicked();

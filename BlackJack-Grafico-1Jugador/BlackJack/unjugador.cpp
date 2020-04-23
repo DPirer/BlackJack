@@ -53,6 +53,7 @@ bool isDividir, BJ = false;
 
 // Varaible para comprobar si estamos en la primera mano
 int contadorManos = 0;
+// Variable a contar las cartas de la banca
 int contadorBanca = 0;
 
 //Se inicia el juego y se asigna un saldo de 2000
@@ -62,10 +63,6 @@ int saldo = 2000, valorJugador = 0, valorJugador2 = 0, valorBanca = 0, apuesta;
 Mano ManoJugador[11] {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
 Mano ManoJugador2[11] {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
 Mano ManoBanca[11] {{0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}, {0,1}};
-
-// Rutas de las imagenes
-char direccion[]="C:/Users/Administrator/Desktop/Baraja_de_cartas/"; //Direccion de la carpeta
-char jpg[]=".jpg";
 
 
 /* FUNCIONES *******************************************************************************************************************************/
@@ -93,38 +90,34 @@ void UnJugador::crearMano(){
     ManoJugador[contadorManos] = UnJugador::repartirCarta();
 
     // Actualizamos el valor total de las cartas del jugador y las mostramos por pantalla
-    valorJugador = valorJugador + ManoJugador[contadorManos].numero;
-    ui -> pantalla_2 -> display(valorJugador);
-
-    // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
-    int palos;
-    if (ManoJugador[contadorManos].palo == "Picas") {
-        palos = 0;
+    // Si la carta es una figura se le asigna el valor de 10 y si es un As 11
+    if (ManoJugador[contadorManos].numero > 10){
+        valorJugador = valorJugador + 10;
     }
-    else if (ManoJugador[contadorManos].palo == "Diamantes") {
-        palos = 1;
-    }
-    else if (ManoJugador[contadorManos].palo == "Treboles") {
-        palos = 2;
+    else if (ManoJugador[contadorManos].numero == 1){
+        valorJugador = valorJugador + 11;
     }
     else {
-        palos = 3;
+        valorJugador = valorJugador + ManoJugador[contadorManos].numero;
     }
-    int numeroCarta = 13 * palos + ManoJugador[contadorManos].numero;
+    // El valor del As puede variar durante del recorrido de la partida
+    // Por lo que hay que actualizarlo
+    // El As puede valer 11 o 1, por lo que si el jugador se pasa de 21 el As pasa a valer 1.
+    if (valorJugador>21){
+        for (int i=0;i<=contadorManos;i++){
+            if (ManoJugador[i].numero == 1){
+                valorJugador = valorJugador - 10;
+            }
+        }
+    }
+    ui -> pantalla_2 -> display(valorJugador);
 
-    // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-    char direccion_Final[200];
-    strcpy(direccion_Final,direccion);
-    char baraja[25];
-    itoa(numeroCarta,baraja,10);
-    strcat(baraja,jpg);
-    strcat(direccion_Final,baraja);
-    QPixmap pix(direccion_Final);
-
-    // Para mostrar la carta dependera de la ronda en la que nos encontremos, para ir usando
-    // cada una de las etiquetas que asignemos. Por lo que se usara un switch
+    // Creamos la direccion de la carta del jugador
+    QString direccionJ = UnJugador::CrearDireccion(ManoJugador[contadorManos].numero,ManoJugador[contadorManos].palo);
+    // Se muestra la carta del jugador
     int wi = ui -> Carta1J -> width();
     int he = ui -> Carta1J -> height();
+    QPixmap pix(direccionJ);
     switch (contadorManos){
                     case 0:
                         ui -> Carta1J -> setPixmap(pix.scaled(wi,he,Qt::KeepAspectRatio));
@@ -146,39 +139,40 @@ void UnJugador::crearMano(){
     // Creamos la mano de la banca si la banca no ha llegado a 21
     if (valorBanca < 21){
         ManoBanca[contadorManos] = UnJugador::repartirCarta();
-        valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+        if (ManoBanca[contadorManos].numero>10){
+            valorBanca = valorBanca + 10;
+        }
+        else if (ManoBanca[contadorBanca].numero == 1){
+            valorBanca = valorBanca + 11;
+        }
+        else {
+            valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+        }
+        // El valor del As puede variar durante del recorrido de la partida
+        // Por lo que hay que actualizarlo
+        // El As puede valer 11 o 1, por lo que si el jugador se pasa de 21 el As pasa a valer 1.
+        if (valorBanca>21){
+            for (int i=0;i<=contadorBanca;i++){
+                if (ManoBanca[i].numero == 1){
+                    valorBanca = valorBanca - 10;
+                }
+            }
+        }
         contadorBanca++;
 
         // La banca unicamente enseñara la primera carta y el resto estaran boca abajo
         // Por lo que tendremos que distinguir entre la primera ronda y el resto
-        // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-        char direccion_Final[200];
-        strcpy(direccion_Final,direccion);
-        char baraja[25];
+        // Usamos la funcion que nos indique donde se encuentra la carta a mostrar
+        QString direccionB;
 
         if (contadorManos == 0){
-            if (ManoBanca[contadorManos].palo == "Picas") {
-                palos = 0;
-            }
-            else if (ManoBanca[contadorManos].palo == "Diamantes") {
-                palos = 1;
-            }
-            else if (ManoBanca[contadorManos].palo == "Treboles") {
-                palos = 2;
-            }
-            else {
-                palos = 3;
-            }
-            numeroCarta = 13 * palos + ManoBanca[contadorManos].numero;
+            direccionB = UnJugador::CrearDireccion(ManoBanca[contadorManos].numero,ManoBanca[contadorManos].palo);
         }
         else {
-            numeroCarta = 0;
+            direccionB = UnJugador::CrearDireccion(0,"Picas");
         }
 
-        itoa(numeroCarta,baraja,10);
-        strcat(baraja,jpg);
-        strcat(direccion_Final,baraja);
-        QPixmap pix(direccion_Final);
+        QPixmap pix(direccionB);
 
         // Mostramos la carta resultate
         switch (contadorManos){
@@ -265,6 +259,39 @@ void UnJugador::comprobarBlackjack(){
 }
 
 
+QString UnJugador::CrearDireccion(int numero, QString Palo){
+
+    // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
+    int palos;
+    if (Palo == "Picas") {
+        palos = 0;
+    }
+    else if (Palo == "Diamantes") {
+        palos = 1;
+    }
+    else if (Palo == "Treboles") {
+        palos = 2;
+    }
+    else {
+        palos = 3;
+    }
+    int numeroCarta = 13 * palos + numero;
+
+
+    // Rutas de las imagenes
+    char direccion[] = "C:/Program Files (x86)/BlackJack/Imagenes/"; //Direccion de la carpeta
+    char jpg[] = ".jpg";
+    char direccion_Final[200];
+    char baraja[25];
+    strcpy(direccion_Final,direccion);
+    itoa(numeroCarta,baraja,10);
+    strcat(baraja,jpg);
+    strcat(direccion_Final,baraja);
+    return direccion_Final;
+
+}
+
+
 /* BOTONES *********************************************************************************************************************************/
 
 
@@ -317,6 +344,8 @@ void UnJugador::on_boton_pedir_carta_clicked()
 void UnJugador::on_boton_retirarse_clicked()
 {
     ui -> label_retirada -> show();
+    int wi = ui -> Carta1B -> width();
+    int he = ui -> Carta1B -> height();
 
     if (isDividir == false){
 
@@ -331,35 +360,11 @@ void UnJugador::on_boton_retirarse_clicked()
 
             // Se muestran las cartas de la banca
             for (int i=1;i<contadorBanca;i++){
-                // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
-                int palos;
-                if (ManoBanca[i].palo == "Picas") {
-                    palos = 0;
-                }
-                else if (ManoBanca[i].palo == "Diamantes") {
-                    palos = 1;
-                }
-                else if (ManoBanca[i].palo == "Treboles") {
-                    palos = 2;
-                }
-                else {
-                    palos = 3;
-                }
-                int numeroCarta = 13 * palos + ManoBanca[i].numero;
+                // Buscamos y creamos la direccion de la carta
+                QString direccionB = UnJugador::CrearDireccion(ManoBanca[i].numero,ManoBanca[i].palo);
+                QPixmap pix(direccionB);
 
-                // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-                char direccion_Final[200];
-                strcpy(direccion_Final,direccion);
-                char baraja[25];
-                itoa(numeroCarta,baraja,10);
-                strcat(baraja,jpg);
-                strcat(direccion_Final,baraja);
-                QPixmap pix(direccion_Final);
-
-                // Para mostrar la carta dependera de la ronda en la que nos encontremos, para ir usando
-                // cada una de las etiquetas que asignemos. Por lo que se usara un switch
-                int wi = ui -> Carta1J -> width();
-                int he = ui -> Carta1J -> height();
+                // Mostramos la carta resultate
                 switch (i){
                                 case 1:
                                     ui -> Carta2B -> setPixmap(pix.scaled(wi,he,Qt::KeepAspectRatio));
@@ -387,7 +392,25 @@ void UnJugador::on_boton_retirarse_clicked()
             // Si la banca tiene menor valor que tú, intentará subirlo
             while (valorBanca < valorJugador){
                 ManoBanca[contadorManos] = UnJugador::repartirCarta();
-                valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+                if (ManoBanca[contadorManos].numero>10){
+                    valorBanca = valorBanca + 10;
+                }
+                else if (ManoBanca[contadorBanca].numero == 1){
+                    valorBanca = valorBanca + 11;
+                }
+                else {
+                    valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+                }
+                // El valor del As puede variar durante del recorrido de la partida
+                // Por lo que hay que actualizarlo
+                // El As puede valer 11 o 1, por lo que si el jugador se pasa de 21 el As pasa a valer 1.
+                if (valorBanca>21){
+                    for (int i=0;i<=contadorBanca;i++){
+                        if (ManoBanca[i].numero == 1){
+                            valorBanca = valorBanca - 10;
+                        }
+                    }
+                }
                 contadorManos++;
                 contadorBanca++;
             }
@@ -397,35 +420,11 @@ void UnJugador::on_boton_retirarse_clicked()
 
             // Se muestran las cartas de la banca
             for (int i=1;i<contadorBanca;i++){
-                // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
-                int palos;
-                if (ManoBanca[i].palo == "Picas") {
-                    palos = 0;
-                }
-                else if (ManoBanca[i].palo == "Diamantes") {
-                    palos = 1;
-                }
-                else if (ManoBanca[i].palo == "Treboles") {
-                    palos = 2;
-                }
-                else {
-                    palos = 3;
-                }
-                int numeroCarta = 13 * palos + ManoBanca[i].numero;
+                // Buscamos y creamos la direccion de la carta
+                QString direccionB = UnJugador::CrearDireccion(ManoBanca[i].numero,ManoBanca[i].palo);
+                QPixmap pix(direccionB);
 
-                // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-                char direccion_Final[200];
-                strcpy(direccion_Final,direccion);
-                char baraja[25];
-                itoa(numeroCarta,baraja,10);
-                strcat(baraja,jpg);
-                strcat(direccion_Final,baraja);
-                QPixmap pix(direccion_Final);
-
-                // Para mostrar la carta dependera de la ronda en la que nos encontremos, para ir usando
-                // cada una de las etiquetas que asignemos. Por lo que se usara un switch
-                int wi = ui -> Carta1J -> width();
-                int he = ui -> Carta1J -> height();
+                // Mostramos la carta resultate
                 switch (i){
                                 case 1:
                                     ui -> Carta2B -> setPixmap(pix.scaled(wi,he,Qt::KeepAspectRatio));
@@ -481,35 +480,11 @@ void UnJugador::on_boton_retirarse_clicked()
 
             // Se muestran las cartas de la banca
             for (int i=1;i<contadorBanca;i++){
-                // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
-                int palos;
-                if (ManoBanca[i].palo == "Picas") {
-                    palos = 0;
-                }
-                else if (ManoBanca[i].palo == "Diamantes") {
-                    palos = 1;
-                }
-                else if (ManoBanca[i].palo == "Treboles") {
-                    palos = 2;
-                }
-                else {
-                    palos = 3;
-                }
-                int numeroCarta = 13 * palos + ManoBanca[i].numero;
+                // Buscamos y creamos la direccion de la carta
+                QString direccionB = UnJugador::CrearDireccion(ManoBanca[i].numero,ManoBanca[i].palo);
+                QPixmap pix(direccionB);
 
-                // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-                char direccion_Final[200];
-                strcpy(direccion_Final,direccion);
-                char baraja[25];
-                itoa(numeroCarta,baraja,10);
-                strcat(baraja,jpg);
-                strcat(direccion_Final,baraja);
-                QPixmap pix(direccion_Final);
-
-                // Para mostrar la carta dependera de la ronda en la que nos encontremos, para ir usando
-                // cada una de las etiquetas que asignemos. Por lo que se usara un switch
-                int wi = ui -> Carta1J -> width();
-                int he = ui -> Carta1J -> height();
+                // Mostramos la carta resultate
                 switch (i){
                                 case 1:
                                     ui -> Carta2B -> setPixmap(pix.scaled(wi,he,Qt::KeepAspectRatio));
@@ -542,7 +517,25 @@ void UnJugador::on_boton_retirarse_clicked()
             // Si la banca tiene menor valor que tú, intentará subirlo
             while ((valorBanca < valorJugador) || (valorBanca < valorJugador2)){
                 ManoBanca[contadorManos] = UnJugador::repartirCarta();
-                valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+                if (ManoBanca[contadorManos].numero>10){
+                    valorBanca = valorBanca + 10;
+                }
+                else if (ManoBanca[contadorBanca].numero == 1){
+                    valorBanca = valorBanca + 11;
+                }
+                else {
+                    valorBanca = valorBanca + ManoBanca[contadorManos].numero;
+                }
+                // El valor del As puede variar durante del recorrido de la partida
+                // Por lo que hay que actualizarlo
+                // El As puede valer 11 o 1, por lo que si el jugador se pasa de 21 el As pasa a valer 1.
+                if (valorBanca>21){
+                    for (int i=0;i<=contadorBanca;i++){
+                        if (ManoBanca[i].numero == 1){
+                            valorBanca = valorBanca - 10;
+                        }
+                    }
+                }
                 contadorManos++;
                 contadorBanca++;
             }
@@ -552,35 +545,11 @@ void UnJugador::on_boton_retirarse_clicked()
 
             // Se muestran las cartas de la banca
             for (int i=1;i<contadorBanca;i++){
-                // Calculamos el valor de la carta segun su palo y valor de esta para buscar la imagen
-                int palos;
-                if (ManoBanca[i].palo == "Picas") {
-                    palos = 0;
-                }
-                else if (ManoBanca[i].palo == "Diamantes") {
-                    palos = 1;
-                }
-                else if (ManoBanca[i].palo == "Treboles") {
-                    palos = 2;
-                }
-                else {
-                    palos = 3;
-                }
-                int numeroCarta = 13 * palos + ManoBanca[i].numero;
+                // Buscamos y creamos la direccion de la carta
+                QString direccionB = UnJugador::CrearDireccion(ManoBanca[i].numero,ManoBanca[i].palo);
+                QPixmap pix(direccionB);
 
-                // Creamos la linea de codigo que nos indique donde se encuentra la carta a mostrar
-                char direccion_Final[200];
-                strcpy(direccion_Final,direccion);
-                char baraja[25];
-                itoa(numeroCarta,baraja,10);
-                strcat(baraja,jpg);
-                strcat(direccion_Final,baraja);
-                QPixmap pix(direccion_Final);
-
-                // Para mostrar la carta dependera de la ronda en la que nos encontremos, para ir usando
-                // cada una de las etiquetas que asignemos. Por lo que se usara un switch
-                int wi = ui -> Carta1J -> width();
-                int he = ui -> Carta1J -> height();
+                // Mostramos la carta resultate
                 switch (i){
                                 case 1:
                                     ui -> Carta2B -> setPixmap(pix.scaled(wi,he,Qt::KeepAspectRatio));

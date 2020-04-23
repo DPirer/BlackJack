@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     //Guardamos la imagen de la mesa de blackjack proporcionandoles la ruta
-    QPixmap MesaInicio("C:/Users/Administrator/Desktop/Baraja_de_cartas/Mesa_blackjack3.jpg");
+    QPixmap MesaInicio("C:/Program Files (x86)/BlackJack/Imagenes/Mesa_blackjack3.jpg");
     //Obtenemos la altura y anchura de la etiqueta para porder colocar bien la imagen
     int w = ui -> Mesa -> width();
     int h = ui -> Mesa -> height();
