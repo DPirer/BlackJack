@@ -19,7 +19,14 @@ public:
 private slots:
     void on_boton_jugador1_clicked();
 
+    void on_boton_jugador2_clicked();
+
+    void on_boton_jugador3_clicked();
+
+    void on_boton_jugador4_clicked();
+
     void on_boton_salir_clicked();
+
 
 private:
     Ui::MainWindow *ui;

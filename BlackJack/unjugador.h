@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "mano.h"
+#include <vector>
 
 namespace Ui {
 class UnJugador;
@@ -19,11 +20,41 @@ public:
 private slots:
     Mano repartirCarta();
 
-    void crearMano();
+    void crearMano(int);
 
     void resetear();
 
-    void comprobarBlackjack();
+    bool comprobarBlackjack(Mano [11]);
+
+    QString CrearDireccion(int,QString);
+
+    int ValorCarta(int,int,Mano [11],int *);
+
+    void crearBanca();
+
+    void mostrarCarta(int,QString);
+
+    void resultado(int);
+
+    void BotonEmpezar();
+
+    void BotonPedirCarta();
+
+    void BotonRetirarse();
+
+    void BotonContinuar();
+
+    void BotonReiniciar();
+
+    void BotonSalir();
+
+    void BotonDoblar();
+
+    void BotonDividir();
+
+    void BotonPedirCarta2();
+
+    void BotonDoblar2();
 
     void on_boton_empezar_clicked();
 
@@ -40,6 +71,10 @@ private slots:
     void on_boton_doblar_clicked();
 
     void on_boton_dividir_clicked();
+
+    void on_boton_pedir_carta2_clicked();
+
+    void on_boton_doblar2_clicked();
 
 private:
     Ui::UnJugador *ui;
