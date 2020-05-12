@@ -222,11 +222,14 @@ void UnJugador::BotonRetirarse(){
             break;
         case 2:
             ui -> label_retirada -> setText("Turno Jugador 3");
+            ui -> Flecha1 -> hide();
             ui -> Flecha2 -> hide();
             ui -> Flecha3 -> show();
             break;
         case 3:
             ui -> label_retirada -> setText("Turno Jugador 4");
+            ui -> Flecha1 -> hide();
+            ui -> Flecha2 -> hide();
             ui -> Flecha3 -> hide();
             ui -> Flecha4 -> show();
             break;
@@ -251,6 +254,9 @@ void UnJugador::BotonRetirarse(){
         ui -> boton_pedir_carta -> hide();
         ui -> boton_pedir_carta2 -> hide();
         ui -> boton_doblar2 -> hide();
+        ui -> Flecha1 -> hide();
+        ui -> Flecha2 -> hide();
+        ui -> Flecha3 -> hide();
         ui -> Flecha4 -> hide();
         // Se crean las varibales para saber el tamaño de las cartas
         int wi = ui -> Carta1B -> width();
@@ -1254,7 +1260,7 @@ void UnJugador::resultado(int jugador){
             // Si el jugador tiene BJ
             else {
                 cadena = "Enhorabuena";
-                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
             }
         }
         else {
@@ -1313,7 +1319,7 @@ void UnJugador::resultado(int jugador){
                     // Si las dos manos tienen BlackJack
                     if (BJJugadores[jugador] == true && BJDivision[jugador] == true) {
                         cadena = "Enhorabuena";
-                        saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6;
+                        saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
                     }
                     // Si al primera mano tiene BlackJack
                     else if (BJJugadores[jugador] == true) {
@@ -1321,21 +1327,21 @@ void UnJugador::resultado(int jugador){
                         if (valorDivisiones[jugador] <= 21){
                             cadena = "Enhorabuena";
                             if (isDoblarD[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 7;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                         }
                         // Si la segunda mano tiene un valor mayor de 21
                         else {
                             if (isDoblarD[jugador] == true) {
                                 cadena = "Te quedas igual";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                             else {
                                 cadena = "Enhorabuena";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                         }
                     }
@@ -1345,21 +1351,21 @@ void UnJugador::resultado(int jugador){
                         if (valorJugadores[jugador] <= 21){
                             cadena = "Enhorabuena";
                             if (isDoblarJ[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 7;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                         }
                         // Si la primera mano tiene un valor mayor de 21
                         else {
                             if (isDoblarJ[jugador] == true) {
                                 cadena = "Te quedas igual";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                             else {
                                 cadena = "Enhorabuena";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                         }
                     }
@@ -1426,7 +1432,7 @@ void UnJugador::resultado(int jugador){
                     // Si las dos manos tienen BlackJack
                     if (BJJugadores[jugador] == true && BJDivision[jugador] == true) {
                         cadena = "Enhorabuena";
-                        saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6;
+                        saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
                     }
                     // Si al primera mano tiene BlackJack
                     else if (BJJugadores[jugador] == true) {
@@ -1434,31 +1440,31 @@ void UnJugador::resultado(int jugador){
                         if (valorDivisiones[jugador] > valorBanca){
                             cadena = "Enhorabuena";
                             if (isDoblarD[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 7;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                         }
                         // Si la segunda mano tiene un valor igual que la banca
                         else if (valorDivisiones[jugador] == valorBanca) {
                             cadena = "Enhorabuena";
                             if (isDoblarD[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3.5;
                             }
                         }
                         // Si la segunda mano tiene un valor menor que la banca
                         else {
                             if (isDoblarD[jugador] == true) {
                                 cadena = "Te quedas igual";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                             else {
                                 cadena = "Enhorabuena";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                         }
                     }
@@ -1468,31 +1474,31 @@ void UnJugador::resultado(int jugador){
                         if (valorJugadores[jugador] > valorBanca){
                             cadena = "Enhorabuena";
                             if (isDoblarJ[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 7;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 6.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                         }
                         // Si la primera mano tiene un valor igual que la banca
                         else if (valorJugadores[jugador] == valorBanca) {
                             cadena = "Enhorabuena";
                             if (isDoblarJ[jugador] == true) {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 5;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4.5;
                             }
                             else {
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 4;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3.5;
                             }
                         }
                         // Si la primera mano tiene un valor menor que la banca
                         else {
                             if (isDoblarJ[jugador] == true) {
                                 cadena = "Te quedas igual";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                             else {
                                 cadena = "Enhorabuena";
-                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 3;
+                                saldos[jugador] = saldos[jugador] + apuestas[jugador] * 2.5;
                             }
                         }
                     }
